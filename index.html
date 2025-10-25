@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Game‑Style Profile — Advanced</title>
+  <title>Game‑Style Profile — Advanced, Responsive</title>
   <style>
     :root{
       --bg:#07090f;          /* Background */
@@ -37,9 +37,9 @@
     .wrap{max-width:1200px;margin:28px auto;padding:0 18px 72px}
 
     /* ===== Top HUD ===== */
-    .hud{position:sticky;top:18px;z-index:5;display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center}
-    .badge{display:inline-grid;grid-auto-flow:column;gap:10px;align-items:center;background:linear-gradient(180deg,#141a2a,#0a0d19);padding:10px 14px;border-radius:999px;box-shadow:var(--shadow)}
-    .badge .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+    .hud{position:sticky;top:18px;z-index:5;display:grid;grid-template-columns:1fr;gap:12px;align-items:center}
+    .badge{display:inline-grid;grid-auto-flow:column;gap:10px;align-items:center;background:linear-gradient(180deg,#141a2a,#0a0d19);padding:10px 14px;border-radius:999px;box-shadow:var(--shadow);width:max-content}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end}
     .hud .btn{appearance:none;border:0;border-radius:999px;padding:10px 14px;color:#031016;background:linear-gradient(180deg,var(--accent),#3bd6f4);font-weight:800;cursor:pointer;box-shadow:0 12px 26px rgba(59,214,244,.28)}
     .hud .btn:active{transform:translateY(1px)}
     .hud .btn.sec{background:linear-gradient(180deg,#8bffb0,#27d67f);box-shadow:0 12px 26px rgba(39,214,127,.28)}
@@ -61,7 +61,6 @@
 
     /* Sections grid */
     .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:18px}
-    @media (max-width: 1020px){ .grid{grid-template-columns:1fr} .hud{grid-template-columns:1fr auto auto} header.hero{grid-template-columns:120px 1fr} .avatar{width:120px;height:120px} }
 
     .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;backdrop-filter:var(--blur);position:relative;overflow:hidden}
     .card h2{margin:2px 0 14px;font-size:20px}
@@ -84,8 +83,7 @@
     .ring::after{content:attr(data-p);position:absolute;inset:0;display:grid;place-items:center;font-size:11px}
 
     /* Inventory */
-    .inv{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-    @media (max-width: 700px){.inv{grid-template-columns:repeat(4,1fr)}}
+    .inv{display:grid;grid-template-columns:repeat(auto-fit, minmax(88px, 1fr));gap:10px}
     .slot{aspect-ratio:1;border-radius:12px;background:linear-gradient(180deg,#0b0f1e,#0a0d19);border:1px dashed rgba(255,255,255,.1);display:grid;place-items:center;position:relative;transition:transform .2s ease, box-shadow .2s ease}
     .slot:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.35)}
     .slot .ico{font-size:22px}
@@ -103,6 +101,25 @@
     /* Toast */
     .toast{position:fixed;left:50%;top:26px;transform:translateX(-50%);background:linear-gradient(180deg,#151a28,#0b0d14);color:var(--ink);padding:10px 14px;border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.45);z-index:9999;opacity:0;pointer-events:none}
 
+    /* ===== Responsive tweaks ===== */
+    @media (max-width: 1020px){
+      .grid{grid-template-columns:1fr}
+      header.hero{grid-template-columns:120px 1fr}
+      .avatar{width:120px;height:120px}
+      .actions{justify-content:flex-start}
+    }
+    @media (max-width: 680px){
+      header.hero{grid-template-columns:1fr; text-align:center}
+      .avatar{margin:0 auto}
+      .stats{grid-template-columns:1fr}
+      .wrap{padding-bottom:96px}
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .tilt, .tilt *{transition:none!important}
+    }
+
     /* Print */
     @media print{body{background:#fff;color:#111}.hud{display:none}.card,header.hero{box-shadow:none;background:#fff;border:1px solid #ddd}}
   </style>
@@ -115,10 +132,12 @@
   <div class="wrap">
     <!-- HUD -->
     <div class="hud" role="toolbar" aria-label="HUD">
-      <div class="badge" aria-live="polite"><span class="dot"></span><span>Online</span></div>
-      <button class="btn" id="btnXP" title="Gain XP">+XP</button>
-      <button class="btn sec" id="btnTheme" title="Toggle Theme">Toggle Theme</button>
-      <button class="btn ghost" id="btnRTL" title="RTL/LTR">Direction</button>
+      <div class="badge" aria-live="polite"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)"></span><span>Online</span></div>
+      <div class="actions">
+        <button class="btn" id="btnXP" title="Gain XP">+XP</button>
+        <button class="btn sec" id="btnTheme" title="Toggle Theme">Toggle Theme</button>
+        <button class="btn ghost" id="btnRTL" title="RTL/LTR">Direction</button>
+      </div>
     </div>
 
     <!-- Hero -->
@@ -216,11 +235,7 @@
           <div class="chip">📧 <a href="mailto:yahiaomar1771@gmail.com" style="color:inherit;text-decoration:none">yahiaomar1771@gmail.com</a></div>
           <div class="chip">📱 <a href="tel:+962782808014" style="color:inherit;text-decoration:none">+962 78 280 8014</a></div>
         </div>
-        <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:16px 0" />
-        <h2>Shortcuts</h2>
-        <div class="chip">Press <span class="mono">B</span> to gain XP</div>
-        <div class="chip">Press <span class="mono">T</span> to toggle theme</div>
-        <div class="chip">Use the Konami Code for 8‑bit mode</div>
+        <!-- Shortcuts section REMOVED per request -->
       </aside>
     </div>
   </div>
@@ -228,13 +243,19 @@
   <div id="toast" class="toast" role="status" aria-live="polite">Done!</div>
 
   <script>
-    // ===== Particle background =====
+    // ===== Particle background (responsive density) =====
     const sky = document.getElementById('sky');
     const sctx = sky.getContext('2d');
     let W, H, P=[];
-    function resize(){ W = sky.width = innerWidth; H = sky.height = innerHeight; }
+    function resize(){
+      W = sky.width = innerWidth; H = sky.height = innerHeight;
+      const target = Math.max(80, Math.min(180, Math.floor((W*H)/50000)));
+      const diff = target - P.length;
+      if(diff>0){ for(let i=0;i<diff;i++) P.push(spawn()); }
+      if(diff<0){ P.splice(target); }
+    }
+    function spawn(){ return {x:Math.random()*W,y:Math.random()*H,z:Math.random()*1.2+.2,v:Math.random()*0.6+0.2}; }
     addEventListener('resize', resize); resize();
-    for(let i=0;i<160;i++) P.push({x:Math.random()*W,y:Math.random()*H,z:Math.random()*1.2+.2,v:Math.random()*0.6+0.2});
     (function loop(){ sctx.clearRect(0,0,W,H);
       for(const p of P){ p.x += (p.v*(Math.random()-.5)); p.y += (p.v*(Math.random()-.5));
         if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0;
@@ -260,7 +281,7 @@
       lvlText.textContent = `LVL ${xp.level} • ${xp.value}/${xp.cap} XP`;
     }
     function flash(msg){ toast.textContent = msg; toast.style.opacity = 1; toast.style.transform = 'translateX(-50%)';
-      setTimeout(()=>{ toast.style.transition='all .35s ease'; toast.style.opacity='0'; toast.style.transform='translateX(-50%) translateY(-6px)'; setTimeout(()=>{toast.style.transition='none'}, 360); }, 1300);
+      setTimeout(()=>{ toast.style.transition='all .35s ease'; toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(-6px)'; setTimeout(()=>{toast.style.transition='none'}, 360); }, 1300);
     }
 
     function gain(n=120){
@@ -313,19 +334,19 @@
         if(alive) requestAnimationFrame(step); else c.remove(); })();
     }
 
-    // Tilt effect
-    for(const el of document.querySelectorAll('.tilt')){
-      el.addEventListener('mousemove', (e)=>{
-        const r = el.getBoundingClientRect(); const cx = (e.clientX - r.left)/r.width - .5; const cy = (e.clientY - r.top)/r.height - .5;
-        el.style.transform = `perspective(900px) rotateY(${(cx*8)}deg) rotateX(${(-cy*8)}deg)`;
-      });
-      el.addEventListener('mouseleave', ()=>{ el.style.transform='perspective(900px) rotateY(0) rotateX(0)'; });
+    // Tilt effect (disabled for small screens / reduced motion)
+    const tiltEnabled = !matchMedia('(max-width: 680px), (prefers-reduced-motion: reduce)').matches;
+    if(tiltEnabled){
+      for(const el of document.querySelectorAll('.tilt')){
+        el.addEventListener('mousemove', (e)=>{
+          const r = el.getBoundingClientRect(); const cx = (e.clientX - r.left)/r.width - .5; const cy = (e.clientY - r.top)/r.height - .5;
+          el.style.transform = `perspective(900px) rotateY(${(cx*8)}deg) rotateX(${(-cy*8)}deg)`;
+        });
+        el.addEventListener('mouseleave', ()=>{ el.style.transform='perspective(900px) rotateY(0) rotateX(0)'; });
+      }
     }
 
-    // Keyboard shortcuts
-    addEventListener('keydown', (e)=>{ const k=e.key.toLowerCase(); if(k==='b') gain(100); if(k==='t') toggleTheme(); });
-
-    // Konami code -> 8‑bit mode (pixelate)
+    // Konami code -> 8‑bit mode (pixelate) — shortcuts section removed, but easter egg kept
     const konami=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];
     let buffer=[]; addEventListener('keydown', (e)=>{ buffer.push(e.key.toLowerCase()); buffer=buffer.slice(-konami.length); if(konami.every((k,i)=> (buffer[i]||'')===k)){ document.body.style.imageRendering = document.body.style.imageRendering==='pixelated'?'auto':'pixelated'; flash('8‑bit mode!'); } });
   </script>
