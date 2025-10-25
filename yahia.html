@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game‑Style Profile — Advanced</title>
+  <style>
+    :root{
+      --bg:#07090f;          /* Background */
+      --panel:#0e1220;       /* Cards */
+      --panel-2:#0a0d18;     /* Secondary cards */
+      --ink:#e6edf7;         /* Text */
+      --muted:#94a3b8;       /* Muted text */
+      --accent:#7cfeff;      /* Neon cyan */
+      --accent-2:#8bffb0;    /* Neon green */
+      --warn:#ffd166;        /* Yellow */
+      --danger:#ff6b81;      /* Red */
+      --ok:#7cf5d9;          /* Success */
+      --shadow: 0 12px 36px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.04);
+      --radius: 20px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", Consolas, "Courier New", monospace;
+      --sans: Inter, "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --blur: saturate(160%) blur(8px);
+    }
+    html,body{height:100%}
+    body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden}
+
+    /* ===== Animated background (particles + glow) ===== */
+    .sky{position:fixed; inset:0; z-index:-2}
+    .vignette{position:fixed; inset:-40px; pointer-events:none; z-index:-1;
+      background: radial-gradient(60% 40% at 20% -10%, #21316166 0, transparent 60%),
+                  radial-gradient(70% 50% at 120% 20%, #0c6c8f66 0, transparent 65%),
+                  radial-gradient(80% 50% at 60% 120%, #1d2b5c55 0, transparent 70%);
+      filter: blur(10px) saturate(130%);
+    }
+
+    .wrap{max-width:1200px;margin:28px auto;padding:0 18px 72px}
+
+    /* ===== Top HUD ===== */
+    .hud{position:sticky;top:18px;z-index:5;display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center}
+    .badge{display:inline-grid;grid-auto-flow:column;gap:10px;align-items:center;background:linear-gradient(180deg,#141a2a,#0a0d19);padding:10px 14px;border-radius:999px;box-shadow:var(--shadow)}
+    .badge .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+    .hud .btn{appearance:none;border:0;border-radius:999px;padding:10px 14px;color:#031016;background:linear-gradient(180deg,var(--accent),#3bd6f4);font-weight:800;cursor:pointer;box-shadow:0 12px 26px rgba(59,214,244,.28)}
+    .hud .btn:active{transform:translateY(1px)}
+    .hud .btn.sec{background:linear-gradient(180deg,#8bffb0,#27d67f);box-shadow:0 12px 26px rgba(39,214,127,.28)}
+    .hud .btn.ghost{background:linear-gradient(180deg,#0f1424,#0b0e18);color:var(--ink);box-shadow:var(--shadow)}
+
+    /* ===== Hero (Player card) ===== */
+    header.hero{position:relative;display:grid;grid-template-columns: 160px 1fr auto;gap:20px;align-items:center;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);backdrop-filter:var(--blur)}
+    .avatar{width:160px;height:160px;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 0 0 2px rgba(255,255,255,.06), 0 20px 40px rgba(0,0,0,.6)}
+    .avatar .ph{position:absolute;inset:0;background:conic-gradient(from 0deg,#0ff3,#0f83,#0ff3),linear-gradient(160deg,#0f172a,#020617);display:grid;place-items:center;font-size:60px;color:#a7f2ff}
+    .title h1{margin:0;font-size:32px;letter-spacing:.3px}
+    .title p{margin:4px 0 0;color:var(--muted)}
+
+    /* Level & XP */
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    .bar{height:14px;border-radius:999px;background:rgba(255,255,255,.09);position:relative;overflow:hidden}
+    .bar .fill{position:absolute;inset:0;transform-origin:0 50%;background:linear-gradient(90deg,var(--warn),#ffa62b);box-shadow:0 0 18px #ffec99 inset}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:linear-gradient(180deg,#0b0f1e,#0a0d19);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+    .mono{font-family:var(--mono)}
+
+    /* Sections grid */
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:18px}
+    @media (max-width: 1020px){ .grid{grid-template-columns:1fr} .hud{grid-template-columns:1fr auto auto} header.hero{grid-template-columns:120px 1fr} .avatar{width:120px;height:120px} }
+
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;backdrop-filter:var(--blur);position:relative;overflow:hidden}
+    .card h2{margin:2px 0 14px;font-size:20px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .tab{cursor:pointer;user-select:none;padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,#0b0f1e,#0a0d19);color:var(--muted);border:1px solid rgba(255,255,255,.06)}
+    .tab[aria-selected="true"]{color:#0b132b;background:linear-gradient(180deg,#7cfeff,#3bd6f4);border-color:transparent;box-shadow:0 12px 26px rgba(59,214,244,.28)}
+    .panel{display:none;margin-top:12px}
+    .panel.active{display:block}
+
+    /* Lightweight 3D tilt */
+    .tilt{transform-style:preserve-3d;perspective:800px}
+    .tilt .tilt-i{transform:translateZ(30px)}
+
+    /* Skills + radial meters */
+    .skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .skill{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px;border-radius:12px;background:linear-gradient(180deg,#0b0f1e,#0a0d19);border:1px solid rgba(255,255,255,.06)}
+    .ring{width:36px;height:36px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--v)*1%), #ffffff10 0);position:relative}
+    .ring::after{content:attr(data-p);position:absolute;inset:0;display:grid;place-items:center;font-size:11px}
+
+    /* Inventory */
+    .inv{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+    @media (max-width: 700px){.inv{grid-template-columns:repeat(4,1fr)}}
+    .slot{aspect-ratio:1;border-radius:12px;background:linear-gradient(180deg,#0b0f1e,#0a0d19);border:1px dashed rgba(255,255,255,.1);display:grid;place-items:center;position:relative;transition:transform .2s ease, box-shadow .2s ease}
+    .slot:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.35)}
+    .slot .ico{font-size:22px}
+    .slot[data-r="epic"]{border-style:solid;box-shadow:0 0 20px #7cfeff22 inset}
+
+    /* Achievements */
+    .ach{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:10px;border-radius:12px;background:linear-gradient(180deg,#0b0f1e,#0a0d19);border:1px solid rgba(255,255,255,.06)}
+    .ach .medal{width:48px;height:48px;border-radius:10px;background:conic-gradient(from 220deg,#ffd166,#ffe29a,#ffd166);display:grid;place-items:center;color:#3b2f00;font-weight:900;box-shadow:inset 0 0 0 2px #0003}
+    .ach small{color:var(--muted)}
+
+    /* Quests */
+    .quest{display:grid;gap:12px}
+    .q{display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:center;padding:10px;border-radius:12px;background:linear-gradient(180deg,#0b0f1e,#0a0d19);border:1px solid rgba(255,255,255,.06)}
+
+    /* Toast */
+    .toast{position:fixed;left:50%;top:26px;transform:translateX(-50%);background:linear-gradient(180deg,#151a28,#0b0d14);color:var(--ink);padding:10px 14px;border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.45);z-index:9999;opacity:0;pointer-events:none}
+
+    /* Print */
+    @media print{body{background:#fff;color:#111}.hud{display:none}.card,header.hero{box-shadow:none;background:#fff;border:1px solid #ddd}}
+  </style>
+</head>
+<body>
+  <!-- Graphics background -->
+  <canvas class="sky" id="sky" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <!-- HUD -->
+    <div class="hud" role="toolbar" aria-label="HUD">
+      <div class="badge" aria-live="polite"><span class="dot"></span><span>Online</span></div>
+      <button class="btn" id="btnXP" title="Gain XP">+XP</button>
+      <button class="btn sec" id="btnTheme" title="Toggle Theme">Toggle Theme</button>
+      <button class="btn ghost" id="btnRTL" title="RTL/LTR">Direction</button>
+    </div>
+
+    <!-- Hero -->
+    <header class="hero tilt" aria-label="Profile Header">
+      <div class="avatar" aria-hidden="true">
+        <div class="ph">🎮</div>
+      </div>
+      <div class="title tilt-i">
+        <h1>Yahia Omar Alshobaki</h1>
+        <p>Student • Into Programming & Games • Curious Learner</p>
+        <div class="stats">
+          <div>
+            <div class="bar" aria-label="XP Bar"><div id="xpFill" class="fill" style="transform:scaleX(.58)"></div></div>
+            <div class="chip mono" id="lvlText">LVL 3 • 580/1000 XP</div>
+          </div>
+          <div class="chip">⚡ Energy: <span class="mono" id="energy">84%</span></div>
+        </div>
+      </div>
+      <div class="tilt-i">
+        <div class="chip mono">🎯 Daily Quest: Solve 3 coding challenges</div>
+      </div>
+    </header>
+
+    <!-- Sections -->
+    <div class="grid" role="region" aria-label="Main Content">
+      <!-- Left -->
+      <section class="card tilt" aria-label="Tabs & About">
+        <h2>Zones</h2>
+        <div class="tabs" role="tablist" aria-label="Profile Tabs">
+          <div class="tab" role="tab" tabindex="0" aria-selected="true" aria-controls="p1" id="t1">About</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="p2" id="t2">Skills</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="p3" id="t3">Inventory</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="p4" id="t4">Achievements</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="p5" id="t5">Quests</div>
+        </div>
+        <div id="p1" class="panel active tilt-i" role="tabpanel" aria-labelledby="t1">
+          <div class="chip">🎯 Objective: grow programming skills through small daily projects.</div>
+          <div class="chip">🕹️ Interests: Front‑end, robotics, and video games.</div>
+        </div>
+        <div id="p2" class="panel" role="tabpanel" aria-labelledby="t2">
+          <div class="skills">
+            <div class="skill"><div class="ring" style="--v:85" data-p="85%"></div><div>HTML / CSS</div><div class="mono">85</div></div>
+            <div class="skill"><div class="ring" style="--v:78" data-p="78%"></div><div>Problem Solving</div><div class="mono">78</div></div>
+            <div class="skill"><div class="ring" style="--v:72" data-p="72%"></div><div>Robotics Basics</div><div class="mono">72</div></div>
+            <div class="skill"><div class="ring" style="--v:80" data-p="80%"></div><div>Teamwork & Communication</div><div class="mono">80</div></div>
+          </div>
+        </div>
+        <div id="p3" class="panel" role="tabpanel" aria-labelledby="t3">
+          <div class="inv">
+            <div class="slot" title="Keyboard Ninja"><span class="ico">⌨️</span></div>
+            <div class="slot" title="CSS Potion" data-r="epic"><span class="ico">🧪</span></div>
+            <div class="slot" title="Logic Scroll"><span class="ico">📜</span></div>
+            <div class="slot" title="Debugger Torch"><span class="ico">🔥</span></div>
+            <div class="slot" title="Time Crystal"><span class="ico">⏳</span></div>
+            <div class="slot" title="Pixel Pickaxe"><span class="ico">⛏️</span></div>
+            <div class="slot" title="Shield of Tests"><span class="ico">🛡️</span></div>
+            <div class="slot" title="API Compass"><span class="ico">🧭</span></div>
+            <div class="slot" title="Commit Blade" data-r="epic"><span class="ico">🗡️</span></div>
+            <div class="slot" title="Sprint Boots"><span class="ico">👟</span></div>
+            <div class="slot" title="Map"><span class="ico">🗺️</span></div>
+            <div class="slot" title="Gem"><span class="ico">💎</span></div>
+          </div>
+        </div>
+        <div id="p4" class="panel" role="tabpanel" aria-labelledby="t4">
+          <div class="ach">
+            <div class="medal">S+</div>
+            <div>
+              <div><strong>CSS Conqueror</strong></div>
+              <small>Built 50 responsive layouts</small>
+            </div>
+            <button class="btn sec" data-claim>Claim</button>
+          </div>
+          <div class="ach" style="margin-top:10px">
+            <div class="medal">A</div>
+            <div>
+              <div><strong>Robot Rookie</strong></div>
+              <small>Built a simple robot in summer camp</small>
+            </div>
+            <button class="btn sec" data-claim>Claim</button>
+          </div>
+        </div>
+        <div id="p5" class="panel" role="tabpanel" aria-labelledby="t5">
+          <div class="quest">
+            <div class="q"><span>🧩</span><div>Solve a quick coding puzzle</div><button class="btn" data-q>Start</button></div>
+            <div class="q"><span>📝</span><div>Write 20 lines of clean code</div><button class="btn" data-q>Start</button></div>
+            <div class="q"><span>📚</span><div>Read a new JavaScript chapter</div><button class="btn" data-q>Start</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right -->
+      <aside class="card tilt" aria-label="Sidebar">
+        <h2>Contact</h2>
+        <div style="display:grid;gap:10px">
+          <div class="chip">📧 <a href="mailto:yahiaomar1771@gmail.com" style="color:inherit;text-decoration:none">yahiaomar1771@gmail.com</a></div>
+          <div class="chip">📱 <a href="tel:+962782808014" style="color:inherit;text-decoration:none">+962 78 280 8014</a></div>
+        </div>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:16px 0" />
+        <h2>Shortcuts</h2>
+        <div class="chip">Press <span class="mono">B</span> to gain XP</div>
+        <div class="chip">Press <span class="mono">T</span> to toggle theme</div>
+        <div class="chip">Use the Konami Code for 8‑bit mode</div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Done!</div>
+
+  <script>
+    // ===== Particle background =====
+    const sky = document.getElementById('sky');
+    const sctx = sky.getContext('2d');
+    let W, H, P=[];
+    function resize(){ W = sky.width = innerWidth; H = sky.height = innerHeight; }
+    addEventListener('resize', resize); resize();
+    for(let i=0;i<160;i++) P.push({x:Math.random()*W,y:Math.random()*H,z:Math.random()*1.2+.2,v:Math.random()*0.6+0.2});
+    (function loop(){ sctx.clearRect(0,0,W,H);
+      for(const p of P){ p.x += (p.v*(Math.random()-.5)); p.y += (p.v*(Math.random()-.5));
+        if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+        sctx.beginPath(); sctx.fillStyle = `hsla(${200+Math.random()*20},90%,${60*p.z}%,.85)`;
+        sctx.arc(p.x,p.y, p.z*1.8, 0, Math.PI*2); sctx.fill();
+      }
+      requestAnimationFrame(loop);
+    })();
+
+    // ===== XP & energy state =====
+    const xp = { value:580, cap:1000, level:3 };
+    const xpFill = document.getElementById('xpFill');
+    const lvlText = document.getElementById('lvlText');
+    const energyEl = document.getElementById('energy');
+    const btnXP = document.getElementById('btnXP');
+    const btnTheme = document.getElementById('btnTheme');
+    const btnRTL = document.getElementById('btnRTL');
+    const toast = document.getElementById('toast');
+
+    function renderXP(){
+      const ratio = Math.min(1, xp.value/xp.cap);
+      xpFill.style.transform = `scaleX(${ratio})`;
+      lvlText.textContent = `LVL ${xp.level} • ${xp.value}/${xp.cap} XP`;
+    }
+    function flash(msg){ toast.textContent = msg; toast.style.opacity = 1; toast.style.transform = 'translateX(-50%)';
+      setTimeout(()=>{ toast.style.transition='all .35s ease'; toast.style.opacity='0'; toast.style.transform='translateX(-50%) translateY(-6px)'; setTimeout(()=>{toast.style.transition='none'}, 360); }, 1300);
+    }
+
+    function gain(n=120){
+      let target = Math.min(xp.cap, xp.value + n);
+      const step = ()=>{
+        if(xp.value < target){ xp.value += Math.ceil((target - xp.value)/12); renderXP(); requestAnimationFrame(step); }
+        else if(xp.value >= xp.cap){ xp.value = 0; xp.level++; xp.cap = Math.round(xp.cap*1.2 + 50); renderXP(); confetti(); flash('Level up!'); }
+      };
+      step();
+      // energy drift
+      const e = Math.max(0, Math.min(100, parseInt(energyEl.textContent) - (5 - Math.round(Math.random()*10))));
+      energyEl.textContent = e + '%';
+    }
+    renderXP();
+
+    // Theme toggle
+    let neon = true;
+    function toggleTheme(){
+      neon = !neon;
+      document.documentElement.style.setProperty('--accent', neon ? '#7cfeff' : '#ff6b81');
+      document.documentElement.style.setProperty('--accent-2', neon ? '#8bffb0' : '#ffd166');
+      document.documentElement.style.setProperty('--warn', neon ? '#ffd166' : '#8bffb0');
+      flash(neon? 'Neon theme' : 'Warm theme');
+    }
+
+    // RTL / LTR
+    function toggleDir(){ const html = document.documentElement; html.dir = (html.dir==='rtl'?'ltr':'rtl'); flash(html.dir==='rtl'?'RTL direction':'LTR direction'); }
+
+    btnXP.addEventListener('click', ()=>gain(140));
+    btnTheme.addEventListener('click', toggleTheme);
+    btnRTL.addEventListener('click', toggleDir);
+
+    // Tabs
+    const tabs = [...document.querySelectorAll('.tab')];
+    const panels = [...document.querySelectorAll('.panel')];
+    function activate(i){ tabs.forEach((t,j)=>{ t.setAttribute('aria-selected', i===j); t.tabIndex = i===j?0:-1; }); panels.forEach((p,j)=>{ p.classList.toggle('active', i===j); }); }
+    tabs.forEach((t,i)=>{ t.addEventListener('click', ()=>activate(i)); t.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); activate(i);} }); });
+
+    // Claim achievements + simple confetti
+    document.querySelectorAll('[data-claim]').forEach((btn, idx)=>{
+      const id = `ach-${idx}`; const storeKey='achieved'; const claimed=new Set(JSON.parse(localStorage.getItem(storeKey)||'[]'));
+      if(claimed.has(id)){ btn.textContent='Claimed'; btn.disabled=true; }
+      btn.addEventListener('click', ()=>{ claimed.add(id); localStorage.setItem(storeKey, JSON.stringify([...claimed])); btn.textContent='Claimed'; btn.disabled=true; confetti(); flash('Achievement unlocked!'); });
+    });
+
+    function confetti(){
+      const n=60; const frags=[]; const c=document.createElement('canvas'); c.width=innerWidth; c.height=innerHeight; c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9998'; const x=c.getContext('2d'); document.body.appendChild(c);
+      for(let i=0;i<n;i++) frags.push({x:innerWidth/2,y:80+Math.random()*40, vx:(Math.random()-.5)*6, vy:Math.random()*-6-4, g:.18+Math.random()*.12, s:4+Math.random()*4, h:Math.random()*360});
+      (function step(){ x.clearRect(0,0,c.width,c.height); let alive=false; for(const f of frags){ f.vy+=f.g; f.x+=f.vx; f.y+=f.vy; x.fillStyle=`hsl(${f.h},95%,65%)`; x.fillRect(f.x,f.y,f.s,f.s); if(f.y<innerHeight+20) alive=true; }
+        if(alive) requestAnimationFrame(step); else c.remove(); })();
+    }
+
+    // Tilt effect
+    for(const el of document.querySelectorAll('.tilt')){
+      el.addEventListener('mousemove', (e)=>{
+        const r = el.getBoundingClientRect(); const cx = (e.clientX - r.left)/r.width - .5; const cy = (e.clientY - r.top)/r.height - .5;
+        el.style.transform = `perspective(900px) rotateY(${(cx*8)}deg) rotateX(${(-cy*8)}deg)`;
+      });
+      el.addEventListener('mouseleave', ()=>{ el.style.transform='perspective(900px) rotateY(0) rotateX(0)'; });
+    }
+
+    // Keyboard shortcuts
+    addEventListener('keydown', (e)=>{ const k=e.key.toLowerCase(); if(k==='b') gain(100); if(k==='t') toggleTheme(); });
+
+    // Konami code -> 8‑bit mode (pixelate)
+    const konami=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];
+    let buffer=[]; addEventListener('keydown', (e)=>{ buffer.push(e.key.toLowerCase()); buffer=buffer.slice(-konami.length); if(konami.every((k,i)=> (buffer[i]||'')===k)){ document.body.style.imageRendering = document.body.style.imageRendering==='pixelated'?'auto':'pixelated'; flash('8‑bit mode!'); } });
+  </script>
+</body>
+</html>
